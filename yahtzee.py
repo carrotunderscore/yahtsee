@@ -2,54 +2,49 @@ from die import Die
 
 
 class YahtzeeMainClass:
-    intTurn = 1
-    keepItGoing = True
-
     def __init__(self):
-        self.intTurn = 1
+        self.dice = [Die() for _ in range(5)]
+        self.turn = 1
+        self.keep_going = True
+        self.limitReached = False
 
-    def is_yahtzee(self, diceRolls):
-        return all(dice == diceRolls[0] for dice in diceRolls)
+    def is_yahtzee(self, dice_rolls):
+        return all(dice == dice_rolls[0] for dice in dice_rolls)
 
-    def playerTurn(self):
-        print(f"Starting turn: {self.intTurn} of 3, rolling dice")
-        diceRolls = []
-        for i in range(5):
-            die = Die()
-            #die.value = 5
-            diceRolls.append(die.value)
+    def play_turn(self):
+        if self.turn == 3:
+            self.limitReached = True
+        if self.turn == 1:
+            self.limitReached = False
+        print(f"Starting turn: {self.turn} of 3, rolling dice")
+        # self.dice = [6, 6, 6, 6, 6]
+        for die in self.dice:
             print(die)
 
-        if self.is_yahtzee(diceRolls):
+        if self.is_yahtzee(self.dice):
             print("You win!")
-            self.playAgain()
+            self.play_again()
 
-        if self.intTurn != 3:
+        if self.turn != 3 and self.keep_going:
             if input("Want to throw again? (y for yes, anything else for no) ") == "y":
-                self.intTurn += 1
+                self.turn += 1
             else:
-                self.keepItGoing = False
+                self.keep_going = False
 
-        if self.intTurn == 3:
-            self.playAgain()
+        if self.limitReached:
+            self.play_again()
+
+    def play_again(self):
+        if input("Game over! Want to play again? ") == "y":
+            self.turn = 1
+            self.keep_going = True
+        else:
+            self.keep_going = False
 
     def run(self):
-        while self.keepItGoing:
-            self.playerTurn()
-
-    def playAgain(self):
-        if input("Game over! Want to play again? ") == "y":
-            self.intTurn = 1
-            self.keepItGoing = True
-            return self.keepItGoing
-        else:
-            self.keepItGoing = False
+        while self.keep_going:
+            self.play_turn()
 
 
-def main():
-    YahtzeeMainClass()
-
-
-if __name__ == "__main__":
-    game = YahtzeeMainClass()
-    game.run()
+game = YahtzeeMainClass()
+game.run()
